@@ -1,9 +1,9 @@
 use super::Postgres;
-use crate::db::{impls::postgres::mute_not_found, models::AuthUser, traits::users::Users};
+use crate::db::{impls::postgres::mute_not_found, models::AuthUser, traits};
 use anyhow::Result;
 use diesel::prelude::*;
 
-impl Users for Postgres {
+impl traits::users::Users for Postgres {
     fn get_auth_user(&self, username: &str) -> Result<Option<AuthUser>> {
         use crate::db::schema::auth::dsl;
         let mut conn = self.pool.get()?;
@@ -40,7 +40,7 @@ impl Users for Postgres {
 
         let res = diesel::update(dsl::auth.find(&user.username))
             .set(dsl::password_hash.eq(&user.password_hash))
-            .get_result::<(String, String)>(&mut conn);
+            .execute(&mut conn);
 
         if let Err(diesel::NotFound) = res {
             diesel::insert_into(dsl::auth)

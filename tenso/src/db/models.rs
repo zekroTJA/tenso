@@ -23,5 +23,5 @@ pub struct StatEntry {
     pub id: String,
     pub link_id: String,
     pub created_date: NaiveDateTime,
-    pub user_agent: String,
+    pub user_agent: Option<String>,
 }

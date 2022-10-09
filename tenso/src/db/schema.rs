@@ -14,8 +14,8 @@ diesel::table! {
         creator_id -> Varchar,
         created_date -> Timestamp,
         destination -> Text,
-        enabled -> Nullable<Bool>,
-        permanent_redirect -> Nullable<Bool>,
+        enabled -> Bool,
+        permanent_redirect -> Bool,
     }
 }
 

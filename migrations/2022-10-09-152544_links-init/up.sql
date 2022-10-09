@@ -14,8 +14,8 @@ CREATE TABLE links (
     "creator_id"            VARCHAR(32)     NOT NULL,
     "created_date"          TIMESTAMP       NOT NULL,
     "destination"           TEXT            NOT NULL,
-    "enabled"               BOOLEAN         DEFAULT 'false',
-    "permanent_redirect"    BOOLEAN         DEFAULT 'false',
+    "enabled"               BOOLEAN         NOT NULL DEFAULT 'false',
+    "permanent_redirect"    BOOLEAN         NOT NULL DEFAULT 'false',
 
     PRIMARY KEY ("id"),
     FOREIGN KEY ("creator_id")
