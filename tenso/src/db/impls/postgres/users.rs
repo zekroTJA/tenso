@@ -1,25 +1,11 @@
-use super::{models::AuthUser, Database};
+use super::Postgres;
+use crate::db::{impls::postgres::mute_not_found, models::AuthUser, traits::users::Users};
 use anyhow::Result;
 use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
-use diesel::RunQueryDsl;
 
-pub struct Postgres {
-    pool: Pool<ConnectionManager<PgConnection>>,
-}
-
-impl Postgres {
-    pub fn new(url: &str) -> Result<Self> {
-        let manager = ConnectionManager::<PgConnection>::new(url);
-        let pool = Pool::builder().build(manager)?;
-
-        Ok(Self { pool })
-    }
-}
-
-impl Database for Postgres {
+impl Users for Postgres {
     fn get_auth_user(&self, username: &str) -> Result<Option<AuthUser>> {
-        use super::schema::auth::dsl;
+        use crate::db::schema::auth::dsl;
         let mut conn = self.pool.get()?;
 
         let res = dsl::auth
@@ -31,7 +17,7 @@ impl Database for Postgres {
     }
 
     fn get_users_count(&self) -> Result<i64> {
-        use super::schema::auth::dsl;
+        use crate::db::schema::auth::dsl;
         let mut conn = self.pool.get()?;
 
         let res = dsl::auth
@@ -41,7 +27,7 @@ impl Database for Postgres {
     }
 
     fn list_users(&self) -> Result<Vec<AuthUser>> {
-        use super::schema::auth::dsl;
+        use crate::db::schema::auth::dsl;
         let mut conn = self.pool.get()?;
 
         let res = dsl::auth.load(&mut conn)?;
@@ -49,7 +35,7 @@ impl Database for Postgres {
     }
 
     fn put_auth_user(&self, user: &AuthUser) -> Result<()> {
-        use super::schema::auth::dsl;
+        use crate::db::schema::auth::dsl;
         let mut conn = self.pool.get()?;
 
         let res = diesel::update(dsl::auth.find(&user.username))
@@ -66,16 +52,5 @@ impl Database for Postgres {
         }
 
         Ok(())
-    }
-}
-
-#[inline]
-fn mute_not_found<T>(
-    res: std::result::Result<T, diesel::result::Error>,
-) -> std::result::Result<Option<T>, diesel::result::Error> {
-    match res {
-        Ok(v) => Ok(Some(v)),
-        Err(diesel::NotFound) => Ok(None),
-        Err(e) => Err(e),
     }
 }

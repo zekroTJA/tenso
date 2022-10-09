@@ -36,6 +36,7 @@ where
             .app_data(db.clone())
             .app_data(token_handler.clone())
             .service(web::scope("/auth").configure(routes::auth::register))
+            .service(web::scope("/links").configure(routes::links::register))
     })
     .bind(addr)?
     .run()
