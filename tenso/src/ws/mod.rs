@@ -1,18 +1,43 @@
-mod auth;
+mod middleware;
 mod models;
+mod routes;
+mod tokens;
 
 use crate::db::DatabaseDriver;
-use actix_web::{web::Data, App, HttpServer};
+use actix_web::{
+    web::{self, Data},
+    App, HttpServer,
+};
+use log::warn;
 use std::{io, net};
 
-pub async fn run<A>(addr: A, db: DatabaseDriver) -> io::Result<()>
+use self::tokens::TokenHandler;
+
+pub struct Config {
+    pub debug_mode: bool,
+    pub jwt_signing_key: String,
+}
+
+pub async fn run<A>(addr: A, cfg: Config, db: DatabaseDriver) -> io::Result<()>
 where
     A: net::ToSocketAddrs,
 {
-    let db = Data::new(db);
+    if cfg.debug_mode {
+        warn!("DEBUG MODE IS ENABLED - THIS IS A SECURITY RISK")
+    }
 
-    HttpServer::new(move || App::new().app_data(db.clone()).service(auth::check))
-        .bind(addr)?
-        .run()
-        .await
+    let cfg = Data::new(cfg);
+    let db = Data::new(db);
+    let token_handler = Data::new(TokenHandler::new(cfg.jwt_signing_key.as_bytes()));
+
+    HttpServer::new(move || {
+        App::new()
+            .app_data(cfg.clone())
+            .app_data(db.clone())
+            .app_data(token_handler.clone())
+            .service(web::scope("/auth").configure(routes::auth::register))
+    })
+    .bind(addr)?
+    .run()
+    .await
 }

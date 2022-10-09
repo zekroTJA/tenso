@@ -20,18 +20,36 @@ impl Postgres {
 impl Database for Postgres {
     fn get_auth_user(&self, username: &str) -> Result<Option<AuthUser>> {
         use super::schema::auth::dsl;
-
         let mut conn = self.pool.get()?;
 
-        let res = dsl::auth.find(username).first::<AuthUser>(&mut conn);
+        let res = dsl::auth
+            .find(username)
+            .first::<AuthUser>(&mut conn);
         let res = mute_not_found(res)?;
 
         Ok(res)
     }
 
+    fn get_users_count(&self) -> Result<i64> {
+        use super::schema::auth::dsl;
+        let mut conn = self.pool.get()?;
+
+        let res = dsl::auth
+            .count()
+            .get_result(&mut conn)?;
+        Ok(res)
+    }
+
+    fn list_users(&self) -> Result<Vec<AuthUser>> {
+        use super::schema::auth::dsl;
+        let mut conn = self.pool.get()?;
+
+        let res = dsl::auth.load(&mut conn)?;
+        Ok(res)
+    }
+
     fn put_auth_user(&self, user: &AuthUser) -> Result<()> {
         use super::schema::auth::dsl;
-
         let mut conn = self.pool.get()?;
 
         let res = diesel::update(dsl::auth.find(&user.username))
