@@ -1,3 +1,3 @@
 -- This file should undo anything in `up.sql`
 
-DROP INDEX "idx_link_ident"
+DROP INDEX "idx_link"
