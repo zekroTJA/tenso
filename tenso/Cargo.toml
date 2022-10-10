@@ -19,4 +19,5 @@ futures = "*"
 rust-argon2 = "1"
 jsonwebtoken = "8"
 getrandom = "*"
-chrono = "0.4"
+chrono = { version = "^0.4.1", features = ["serde", "rustc-serialize"] }
+xid = "1"

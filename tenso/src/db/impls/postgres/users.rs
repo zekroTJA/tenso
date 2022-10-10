@@ -38,11 +38,11 @@ impl traits::users::Users for Postgres {
         use crate::db::schema::auth::dsl;
         let mut conn = self.pool.get()?;
 
-        let res = diesel::update(dsl::auth.find(&user.username))
+        let res: usize = diesel::update(dsl::auth.find(&user.username))
             .set(dsl::password_hash.eq(&user.password_hash))
-            .execute(&mut conn);
+            .execute(&mut conn)?;
 
-        if let Err(diesel::NotFound) = res {
+        if res == 0 {
             diesel::insert_into(dsl::auth)
                 .values((
                     dsl::username.eq(&user.username),

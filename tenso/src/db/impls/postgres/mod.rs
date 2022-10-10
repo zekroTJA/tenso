@@ -1,4 +1,5 @@
 mod links;
+mod stats;
 mod users;
 
 use crate::db::traits::Database;

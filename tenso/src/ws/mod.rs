@@ -16,6 +16,8 @@ use self::tokens::TokenHandler;
 pub struct Config {
     pub debug_mode: bool,
     pub jwt_signing_key: String,
+    pub default_redirect: Option<String>,
+    pub notfound_redirect: Option<String>,
 }
 
 pub async fn run<A>(addr: A, cfg: Config, db: DatabaseDriver) -> io::Result<()>
@@ -37,6 +39,7 @@ where
             .app_data(token_handler.clone())
             .service(web::scope("/auth").configure(routes::auth::register))
             .service(web::scope("/links").configure(routes::links::register))
+            .configure(routes::root::register)
     })
     .bind(addr)?
     .run()

@@ -16,3 +16,25 @@ pub struct AuthLoginRequestModel {
     pub username: String,
     pub password: String,
 }
+
+#[derive(Deserialize)]
+pub struct LinkCreateRequestModel {
+    pub ident: String,
+    pub destination: String,
+    pub enabled: bool,
+    pub permanent_redirect: bool,
+}
+
+#[derive(Deserialize)]
+pub struct LinkUpdateRequestModel {
+    pub ident: Option<String>,
+    pub destination: Option<String>,
+    pub enabled: Option<bool>,
+    pub permanent_redirect: Option<bool>,
+}
+
+#[derive(Deserialize)]
+pub struct PagingQuery {
+    pub limit: Option<usize>,
+    pub offset: Option<usize>,
+}
