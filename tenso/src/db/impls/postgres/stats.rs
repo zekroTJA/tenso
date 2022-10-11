@@ -24,14 +24,22 @@ impl traits::stats::Stats for Postgres {
 
     fn query_stats(
         &self,
+        user_id: Option<&str>,
         link_id: Option<&str>,
         from: Option<chrono::NaiveDateTime>,
         to: Option<chrono::NaiveDateTime>,
     ) -> Result<Vec<StatEntry>> {
+        use crate::db::schema::links;
         use crate::db::schema::stats;
         let mut conn = self.pool.get()?;
 
-        let mut query = stats::table.into_boxed();
+        let mut query = stats::table
+            .inner_join(links::table)
+            .into_boxed();
+
+        if let Some(user_id) = user_id {
+            query = query.filter(links::creator_id.eq(user_id));
+        }
 
         if let Some(link_id) = link_id {
             query = query.filter(stats::link_id.eq(link_id));
@@ -45,7 +53,14 @@ impl traits::stats::Stats for Postgres {
             query = query.filter(stats::created_date.le(to))
         }
 
-        let res = query.load(&mut conn)?;
+        let res = query
+            .select((
+                stats::id,
+                stats::link_id,
+                stats::created_date,
+                stats::user_agent,
+            ))
+            .load(&mut conn)?;
 
         Ok(res)
     }
