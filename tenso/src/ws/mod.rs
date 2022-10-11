@@ -13,7 +13,7 @@ use actix_web::{
 use log::warn;
 use std::{io, net};
 
-use self::tokens::TokenHandler;
+use self::{middleware::xsrf::Xsrf, tokens::TokenHandler};
 
 pub struct Config {
     pub debug_mode: bool,
@@ -56,6 +56,11 @@ where
                             .supports_credentials()
                             .max_age(3600),
                     ))
+                    .wrap(
+                        Xsrf::new()
+                            .cookie_name("xsrf-token")
+                            .header_name("X-XSRF-Token"),
+                    )
                     .service(web::scope("/auth").configure(routes::auth::register))
                     .service(web::scope("/links").configure(routes::links::register))
                     .service(web::scope("/stats").configure(routes::stats::register)),

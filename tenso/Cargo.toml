@@ -22,3 +22,5 @@ getrandom = "*"
 chrono = { version = "^0.4.1", features = ["serde", "rustc-serialize"] }
 xid = "1"
 actix-cors = "^0.6"
+actix-service = "^2"
+base64 = "^0.13"
