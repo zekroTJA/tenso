@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    db::{models::StatEntry, DatabaseDriver},
+    db::DatabaseDriver,
     ws::{middleware::auth::AuthService, models::StatsQuery},
 };
 use actix_web::{

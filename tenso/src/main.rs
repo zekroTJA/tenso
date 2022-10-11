@@ -23,6 +23,7 @@ async fn main() -> anyhow::Result<()> {
         env::var("WS_SIGNING_KEY").unwrap_or_else(|_| "TODO: generate random signing key".into());
     let default_redirect = env::var("WS_REDIRECT_DEFAULT").ok();
     let notfound_redirect = env::var("WS_REDIRECT_NOTFOUND").ok();
+    let origin_url = env::var("WS_ORIGINURL").ok();
 
     let d = db::DatabaseDriver::init(&database_url)?;
 
@@ -31,6 +32,7 @@ async fn main() -> anyhow::Result<()> {
         jwt_signing_key,
         default_redirect,
         notfound_redirect,
+        origin_url,
     };
     info!("WS :: Binding to {bind_addr}");
     ws::run(&bind_addr, cfg, d).await?;
