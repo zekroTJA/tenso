@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
@@ -37,4 +38,10 @@ pub struct LinkUpdateRequestModel {
 pub struct PagingQuery {
     pub limit: Option<usize>,
     pub offset: Option<usize>,
+}
+
+#[derive(Deserialize)]
+pub struct StatsQuery {
+    pub from: Option<NaiveDateTime>,
+    pub to: Option<NaiveDateTime>,
 }
