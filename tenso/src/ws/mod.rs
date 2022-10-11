@@ -46,21 +46,16 @@ where
                     .wrap(Condition::new(
                         cfg.origin_url.is_some(),
                         Cors::default()
-                            .allowed_origin(
-                                &cfg.origin_url
-                                    .clone()
-                                    .unwrap_or_default(),
-                            )
+                            .allowed_origin(&cfg.origin_url.clone().unwrap_or_default())
                             .allow_any_header()
                             .allow_any_method()
                             .supports_credentials()
                             .max_age(3600),
                     ))
-                    .wrap(
-                        Xsrf::new()
-                            .cookie_name("xsrf-token")
-                            .header_name("X-XSRF-Token"),
-                    )
+                    .wrap(Condition::new(
+                        !cfg.debug_mode,
+                        Xsrf::new().cookie_name("xsrf-token").header_name("X-XSRF-Token"),
+                    ))
                     .service(web::scope("/auth").configure(routes::auth::register))
                     .service(web::scope("/links").configure(routes::links::register))
                     .service(web::scope("/stats").configure(routes::stats::register)),
