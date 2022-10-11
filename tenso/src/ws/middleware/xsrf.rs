@@ -5,7 +5,7 @@ use std::{
 
 use actix_service::Transform;
 use actix_web::{
-    cookie::Cookie,
+    cookie::{Cookie, Expiration},
     dev::{Service, ServiceRequest, ServiceResponse},
     error, Error,
 };
@@ -39,7 +39,14 @@ where
             return async move {
                 let token = Self::get_token().map_err(error::ErrorInternalServerError)?;
                 let mut res = srv.call(req).await?;
-                res.response_mut().add_cookie(&Cookie::build(name, token).path("/").finish())?;
+                res.response_mut().add_cookie(
+                    &Cookie::build(name, token)
+                        .path("/")
+                        .secure(true)
+                        .http_only(true)
+                        .expires(Expiration::Session)
+                        .finish(),
+                )?;
                 Ok(res)
             }
             .boxed_local();
