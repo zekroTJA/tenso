@@ -43,7 +43,7 @@ jobs:
             type=sha,format=long,enable=${{ github.ref_type != 'tag' }}
             type=ref,event=branch
             type=semver,pattern={{raw}},enable=${{ github.ref_type == 'tag' }}
-            type=raw,value=latest,enable=${{ github.event.ref =='refs/heads/master'}}
+            type=raw,value=latest,enable=${{ github.event.ref =='refs/heads/main'}}
           flavor: latest=false
 
       - name: Build & Push
