@@ -11,10 +11,7 @@ async fn main() -> anyhow::Result<()> {
     env_logger::init();
 
     let debug_mode = env::var("DEBUG_MODE")
-        .map(|v| {
-            v.parse::<bool>()
-                .expect("invalid value for bool env var 'DEBUG_MODE")
-        })
+        .map(|v| v.parse::<bool>().expect("invalid value for bool env var 'DEBUG_MODE"))
         .unwrap_or(false);
     let bind_addr = env::var("WS_BINDADDR").unwrap_or_else(|_| "0.0.0.0:80".into());
     let database_url =
@@ -26,6 +23,8 @@ async fn main() -> anyhow::Result<()> {
     let origin_url = env::var("WS_ORIGINURL").ok();
 
     let d = db::DatabaseDriver::init(&database_url)?;
+    info!("DB :: Applying database migrations ...");
+    d.apply_migrations()?;
 
     let cfg = ws::Config {
         debug_mode,

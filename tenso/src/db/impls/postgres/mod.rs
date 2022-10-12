@@ -3,9 +3,12 @@ mod stats;
 mod users;
 
 use crate::db::traits::Database;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../migrations");
 
 pub struct Postgres {
     pool: Pool<ConnectionManager<PgConnection>>,
@@ -20,7 +23,13 @@ impl Postgres {
     }
 }
 
-impl Database for Postgres {}
+impl Database for Postgres {
+    fn apply_migrations(&self) -> Result<()> {
+        let mut conn = self.pool.get()?;
+        conn.run_pending_migrations(MIGRATIONS).map_err(|e| anyhow!(e))?;
+        Ok(())
+    }
+}
 
 #[inline]
 pub fn mute_not_found<T>(
