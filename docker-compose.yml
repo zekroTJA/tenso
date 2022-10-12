@@ -1,0 +1,29 @@
+volumes:
+  postgres-data:
+
+services:
+
+  postgres:
+    image: postgres:alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "root"
+      POSTGRES_DB: "tenso"
+    restart: always
+  
+  tenso:
+    build: .
+    image: ghcr.io/zekrotja/tenso:latest
+    environment:
+      DEBUG_MODE: "false"
+      WS_BINDADDR: "http://0.0.0.0:80"
+      DATABASE_URL: "postgres://root:root@postgres/tenso"
+      WS_SIGNING_KEY: "46657507-f356-4561-bea0-5f88c3705c50"
+      WS_REDIRECT_DEFAULT: "https://zekro.de"
+      WS_REDIRECT_NOTFOUND: "/ui/notfound"
+      WS_ORIGINURL: "https://example.com"
+    restart: always
+    depends_on:
+      - postgres
