@@ -43,7 +43,7 @@ where
                     &Cookie::build(name, token)
                         .path("/")
                         .secure(true)
-                        .http_only(true)
+                        .http_only(false)
                         .expires(Expiration::Session)
                         .finish(),
                 )?;
