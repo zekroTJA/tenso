@@ -91,20 +91,10 @@ async fn update_link(
         id: res.id,
         created_date: res.created_date,
         creator_id: res.creator_id,
-        ident: link
-            .ident
-            .clone()
-            .unwrap_or(res.ident),
-        destination: link
-            .destination
-            .clone()
-            .unwrap_or(res.destination),
-        enabled: link
-            .enabled
-            .unwrap_or(res.enabled),
-        permanent_redirect: link
-            .permanent_redirect
-            .unwrap_or(res.permanent_redirect),
+        ident: link.ident.clone().unwrap_or(res.ident),
+        destination: link.destination.clone().unwrap_or(res.destination),
+        enabled: link.enabled.unwrap_or(res.enabled),
+        permanent_redirect: link.permanent_redirect.unwrap_or(res.permanent_redirect),
     };
 
     let _new_link = new_link.clone();

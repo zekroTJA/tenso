@@ -12,7 +12,7 @@ pub struct AuthInitRequestModel {
     pub password: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct AuthLoginRequestModel {
     pub username: String,
     pub password: String,

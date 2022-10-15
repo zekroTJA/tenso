@@ -52,7 +52,7 @@ where
             .boxed_local();
         }
 
-        if req.method() != "GET" {
+        if req.method() != "GET" && req.method() != "OPTIONS" {
             let token_header = req.headers().get(&self.header_name);
             if token_header.is_none()
                 || token_cookie.is_none()
@@ -70,7 +70,7 @@ impl<S> XsrfMiddleware<S> {
     fn get_token() -> Result<String, getrandom::Error> {
         let mut buf = [0u8; 16];
         getrandom::getrandom(&mut buf)?;
-        Ok(base64::encode(buf))
+        Ok(base64_url::encode(&buf))
     }
 }
 

@@ -5,7 +5,10 @@ mod tokens;
 
 use crate::db::DatabaseDriver;
 use actix_cors::Cors;
+use actix_files::{Files, NamedFile};
+use actix_service::fn_service;
 use actix_web::{
+    dev::{ServiceRequest, ServiceResponse},
     middleware::{Condition, Logger},
     web::{self, Data},
     App, HttpServer,
@@ -41,6 +44,16 @@ where
             .app_data(db.clone())
             .app_data(token_handler.clone())
             .wrap(Logger::default())
+            .service(
+                Files::new("/ui", "./webapp/dist").index_file("index.html").default_handler(
+                    fn_service(|req: ServiceRequest| async {
+                        let (req, _) = req.into_parts();
+                        let file = NamedFile::open_async("./webapp/dist/index.html").await?;
+                        let res = file.into_response(&req);
+                        Ok(ServiceResponse::new(req, res))
+                    }),
+                ),
+            )
             .service(
                 web::scope("/api")
                     .wrap(Condition::new(

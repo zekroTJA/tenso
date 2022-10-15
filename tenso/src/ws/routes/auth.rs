@@ -13,6 +13,7 @@ use actix_web::{
     web::{self, Data, Json, ServiceConfig},
     Error, HttpResponse,
 };
+use log::debug;
 
 const TOKEN_LIFETIME_SECONDS: usize = 3600 * 24 * 30; // 30 days
 
@@ -72,6 +73,8 @@ async fn post_login(
     token_handler: Data<TokenHandler>,
     p: Json<AuthLoginRequestModel>,
 ) -> Result<HttpResponse, Error> {
+    debug!("payload: {:#?}", p);
+
     if p.username.is_empty() || p.password.is_empty() {
         return Err(error::ErrorUnauthorized("unauthorized"));
     }
@@ -100,9 +103,7 @@ async fn post_login(
         .http_only(true)
         .finish();
 
-    Ok(HttpResponse::NoContent()
-        .cookie(cookie)
-        .finish())
+    Ok(HttpResponse::NoContent().cookie(cookie).finish())
 }
 
 #[get("/check")]
@@ -111,8 +112,8 @@ async fn get_check(auth: AuthService) -> Result<HttpResponse, Error> {
 }
 
 pub fn register(cfg: &mut ServiceConfig) {
-    cfg.service(get_init)
-        .service(post_init)
-        .service(post_login)
-        .service(get_check);
+    cfg.service(get_init);
+    cfg.service(post_init);
+    cfg.service(post_login);
+    cfg.service(get_check);
 }
