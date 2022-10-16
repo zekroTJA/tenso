@@ -1,4 +1,5 @@
 mod db;
+mod util;
 mod ws;
 
 use dotenvy::dotenv;

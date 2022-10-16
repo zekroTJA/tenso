@@ -1,10 +1,11 @@
 use crate::{
     db::{models::AuthUser, DatabaseDriver},
+    util::rand::Rand,
     ws::{
         middleware::auth::AuthService,
         models::*,
         tokens::{Claims, TokenHandler},
-        Config,
+        Config, State,
     },
 };
 use actix_web::{
@@ -30,6 +31,7 @@ async fn get_init(db: Data<DatabaseDriver>) -> Result<HttpResponse, Error> {
 #[post("/init")]
 async fn post_init(
     db: Data<DatabaseDriver>,
+    state: Data<State>,
     p: Json<AuthInitRequestModel>,
 ) -> Result<HttpResponse, Error> {
     if p.username.is_empty() {
@@ -47,9 +49,20 @@ async fn post_init(
         return Err(error::ErrorBadRequest("already initialized"));
     }
 
+    if state.initialization_token.is_none() {
+        return Err(error::ErrorInternalServerError("initialization token not generated; this should actually not happen, please restart the app and try again"));
+    }
+
+    if let Some(token) = &state.initialization_token {
+        if token != &p.token {
+            return Err(error::ErrorBadRequest("invalid initialization token"));
+        }
+    } else {
+        return Err(error::ErrorInternalServerError("initialization token not generated; this should actually not happen, please restart the app and try again"));
+    }
+
     let cfg = argon2::Config::default();
-    let mut salt = [0u8; 32];
-    getrandom::getrandom(&mut salt).map_err(error::ErrorInternalServerError)?;
+    let salt: Vec<u8> = Rand::get(32).map_err(error::ErrorInternalServerError)?;
     let password_hash = argon2::hash_encoded(p.password.as_bytes(), &salt, &cfg)
         .map_err(error::ErrorInternalServerError)?;
 

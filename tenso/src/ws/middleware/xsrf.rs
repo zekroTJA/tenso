@@ -5,11 +5,13 @@ use std::{
 
 use actix_service::Transform;
 use actix_web::{
-    cookie::{Cookie, Expiration},
+    cookie::{Cookie, Expiration, SameSite},
     dev::{Service, ServiceRequest, ServiceResponse},
     error, Error,
 };
 use futures::{future::LocalBoxFuture, FutureExt};
+
+use crate::util::rand::Rand;
 
 pub struct XsrfMiddleware<S> {
     service: Rc<S>,
@@ -44,6 +46,7 @@ where
                         .path("/")
                         .secure(true)
                         .http_only(false)
+                        .same_site(SameSite::Strict)
                         .expires(Expiration::Session)
                         .finish(),
                 )?;
@@ -67,10 +70,9 @@ where
 }
 
 impl<S> XsrfMiddleware<S> {
+    #[inline]
     fn get_token() -> Result<String, getrandom::Error> {
-        let mut buf = [0u8; 16];
-        getrandom::getrandom(&mut buf)?;
-        Ok(base64_url::encode(&buf))
+        Rand::get(16)
     }
 }
 

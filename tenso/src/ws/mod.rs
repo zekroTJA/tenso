@@ -3,7 +3,7 @@ mod models;
 mod routes;
 mod tokens;
 
-use crate::db::DatabaseDriver;
+use crate::{db::DatabaseDriver, util::rand::Rand};
 use actix_cors::Cors;
 use actix_files::{Files, NamedFile};
 use actix_service::fn_service;
@@ -13,8 +13,9 @@ use actix_web::{
     web::{self, Data},
     App, HttpServer,
 };
+use anyhow::Result;
 use log::warn;
-use std::{io, net};
+use std::net;
 
 use self::{middleware::xsrf::Xsrf, tokens::TokenHandler};
 
@@ -26,7 +27,19 @@ pub struct Config {
     pub origin_url: Option<String>,
 }
 
-pub async fn run<A>(addr: A, cfg: Config, db: DatabaseDriver) -> io::Result<()>
+pub(self) struct State {
+    pub initialization_token: Option<String>,
+}
+
+impl State {
+    fn default() -> Self {
+        Self {
+            initialization_token: None,
+        }
+    }
+}
+
+pub async fn run<A>(addr: A, cfg: Config, db: DatabaseDriver) -> Result<()>
 where
     A: net::ToSocketAddrs,
 {
@@ -37,12 +50,25 @@ where
     let cfg = Data::new(cfg);
     let db = Data::new(db);
     let token_handler = Data::new(TokenHandler::new(cfg.jwt_signing_key.as_bytes()));
+    let mut state = State::default();
+
+    if db.get_users_count()? == 0 {
+        let initialization_token = Rand::get(24)?;
+        warn!(
+            "The app is not initialized - use this token to initialize the app:\n\n{}\n",
+            &initialization_token
+        );
+        state.initialization_token = Some(initialization_token);
+    };
+
+    let state = Data::new(state);
 
     HttpServer::new(move || {
         App::new()
             .app_data(cfg.clone())
             .app_data(db.clone())
             .app_data(token_handler.clone())
+            .app_data(state.clone())
             .wrap(Logger::default())
             .service(
                 Files::new("/ui", "./webapp/dist").index_file("index.html").default_handler(
@@ -77,5 +103,7 @@ where
     })
     .bind(addr)?
     .run()
-    .await
+    .await?;
+
+    Ok(())
 }
