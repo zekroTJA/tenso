@@ -1,9 +1,21 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 
+import { Client } from "./lib/tenso";
 import { DarkTheme } from "./theme/theme";
+import { InitRoute } from "./routes/init/Init";
 import { LoginRoute } from "./routes/login/Login";
 import { MainRoute } from "./routes/main/Main";
+import { Router } from "./Router";
+import { useApi } from "./hooks/useApi";
+import { useEffect } from "react";
+import { useEffectAsync } from "./hooks/useEffectAsync";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -30,11 +42,8 @@ function App() {
   return (
     <ThemeProvider theme={DarkTheme}>
       <Container>
-        <BrowserRouter>
-          <Routes>
-            <Route index element={<MainRoute />} />
-            <Route path="/login" element={<LoginRoute />} />
-          </Routes>
+        <BrowserRouter basename="/ui">
+          <Router />
         </BrowserRouter>
       </Container>
       <GlobalStyle />

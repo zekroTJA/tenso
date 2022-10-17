@@ -14,17 +14,30 @@ export const Button = styled.button<Props>`
   cursor: pointer;
   padding: 0.5em;
   font-size: 1em;
-  outline: solid 3px ${(p) => Color(p.theme.accent).fade(1).hexa()};
+  outline: solid 3px
+    ${(p) =>
+      Color(p.color ?? p.theme.accent)
+        .fade(1)
+        .hexa()};
   color: inherit;
   border-radius: 8px;
 
   transition: all 0.15s ease;
 
   &:focus {
-    outline-color: ${(p) => p.theme.accent};
+    outline-color: ${(p) => p.color ?? p.theme.accent};
   }
 
   &:hover {
     background-color: ${(p) => p.color ?? p.theme.accent};
+  }
+
+  &:disabled {
+    background-color: ${(p) =>
+      Color(p.color ?? p.theme.accent)
+        .fade(0.2)
+        .hexa()};
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;

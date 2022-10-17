@@ -1,91 +1,54 @@
-import { APIError } from "./errors";
+import { Credentials, InitCredentials, Initialized, Link } from "./models";
 
-export type HttpMethod =
-  | "GET"
-  | "PUT"
-  | "POST"
-  | "DELETE"
-  | "PATCH"
-  | "OPTIONS";
+import { HttpClient } from "./http";
 
-export type HttpHeadersMap = { [key: string]: string };
+export class Client {
+  private httpClient: HttpClient;
 
-export class HttpClient {
-  private _xsrfToken: string | undefined = undefined;
-
-  constructor(public endpoint: string) {}
-
-  async req<T>(
-    method: HttpMethod,
-    path: string,
-    body?: object,
-    headers: HttpHeadersMap = {}
-  ): Promise<T> {
-    const _headers = new Headers();
-    _headers.set("Accept", "application/json");
-    Object.keys(headers).forEach((k) => _headers.set(k, headers[k]));
-
-    let _body = null;
-    if (!!body) {
-      if (body instanceof File) {
-        const formData = new FormData();
-        formData.append("file", body);
-        _body = formData;
-      } else {
-        _headers.set("Content-Type", "application/json");
-        _body = JSON.stringify(body);
-      }
-    }
-
-    let xsrfToken = this.xsrfToken;
-    if (!!xsrfToken) {
-      _headers.append("X-XSRF-Token", xsrfToken);
-    }
-
-    const fullPath = replaceDoublePath(`${this.endpoint}/${path}`);
-    const res = await window.fetch(fullPath, {
-      method,
-      headers: _headers,
-      body: _body,
-      credentials: "include",
-    });
-
-    if (res.status >= 400) throw new APIError(res, await res.text());
-
-    if (res.status === 204) {
-      return {} as T;
-    }
-
-    let data = {};
-    try {
-      data = await res.json();
-    } catch {}
-
-    return data as T;
+  constructor(endpoint: string) {
+    this.httpClient = new HttpClient(endpoint);
   }
 
-  protected basePath(path?: string): string {
-    return replaceDoublePath(`${this.endpoint}/${path}`);
+  authCheckInit(): Promise<Initialized> {
+    return this.httpClient.req("GET", "auth/init");
   }
 
-  private get xsrfToken() {
-    if (this._xsrfToken) return this._xsrfToken;
-    this._xsrfToken = getCookie("xsrf-token");
-    return this._xsrfToken;
+  authInit(creds: InitCredentials): Promise<void> {
+    return this.httpClient.req("POST", "auth/init", creds);
   }
-}
 
-function replaceDoublePath(url: string): string {
-  const split = url.split("://");
-  split[split.length - 1] = split[split.length - 1].replace(/\/\//g, "/");
-  return split.join("://");
-}
+  authLogin(creds: Credentials): Promise<void> {
+    return this.httpClient.req("POST", "auth/login", creds);
+  }
 
-function getCookie(key: string) {
-  return document.cookie
-    .split(";")
-    .map((kv) => kv.trim().split("=", 2))
-    .filter((kv) => kv.length === 2 && !!kv[0] && !!kv[1])
-    .find((kv) => kv[0] === key)
-    ?.at(1);
+  authCheck(): Promise<void> {
+    return this.httpClient.req("GET", "auth/check");
+  }
+
+  links(): Promise<Link[]> {
+    return this.httpClient.req("GET", "links");
+  }
+
+  link(id: string): Promise<Link> {
+    return this.httpClient.req("GET", `link/${id}`);
+  }
+
+  linkCreate(link: Link): Promise<Link> {
+    return this.httpClient.req("GET", "link", link);
+  }
+
+  linkUpdate(ident: string, link: Partial<Link>): Promise<Link> {
+    return this.httpClient.req("GET", `link/${ident}`, link);
+  }
+
+  linkDelete(ident: string): Promise<void> {
+    return this.httpClient.req("DELETE", `link/${ident}`);
+  }
+
+  stats(ident: string, from?: string, to?: string): Promise<void> {
+    const params = new URLSearchParams();
+    from ?? params.set("from", from!);
+    to ?? params.set("to", to!);
+    return this.httpClient.req("GET", `stats/${ident}?${params.toString()}`);
+  }
 }

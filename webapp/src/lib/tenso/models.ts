@@ -7,6 +7,10 @@ export type Credentials = {
   password: string;
 };
 
+export type InitCredentials = Credentials & {
+  token: string;
+};
+
 export type Link = {
   ident: string;
   destination: string;
