@@ -51,7 +51,7 @@ async fn cretae_link(
     let _db = db.clone();
     let ident = link.ident.clone();
     let claims = auth.claims();
-    let res = web::block(move || _db.get_link(&claims.sub, &ident))
+    let res = web::block(move || _db.get_link(Some(&claims.sub), &ident))
         .await?
         .map_err(error::ErrorInternalServerError)?;
     if res.is_some() {
@@ -86,6 +86,16 @@ async fn update_link(
 ) -> Result<HttpResponse, Error> {
     let _db = db.clone();
     let res = _get_link(auth.claims(), id.to_string(), _db).await?;
+
+    let _db = db.clone();
+    if let Some(ident) = link.ident.clone() {
+        let res = web::block(move || _db.get_link(None, &ident))
+            .await?
+            .map_err(error::ErrorInternalServerError)?;
+        if res.is_some() && res.unwrap().id != id.as_str() {
+            return Err(error::ErrorBadRequest("link with ident already exists"));
+        }
+    }
 
     let new_link = Link {
         id: res.id,
@@ -132,7 +142,7 @@ pub fn register(cfg: &mut ServiceConfig) {
 // --- helper ---
 
 async fn _get_link(claims: Claims, id: String, db: Data<DatabaseDriver>) -> Result<Link, Error> {
-    let res = web::block(move || db.get_link(&claims.sub, &id))
+    let res = web::block(move || db.get_link(Some(&claims.sub), &id))
         .await?
         .map_err(error::ErrorInternalServerError)?;
     match res {

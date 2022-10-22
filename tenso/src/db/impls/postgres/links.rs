@@ -20,17 +20,18 @@ impl traits::links::Links for Postgres {
         Ok(res)
     }
 
-    fn get_link(&self, user_id: &str, id_or_ident: &str) -> Result<Option<Link>> {
-        use crate::db::schema::links::dsl;
+    fn get_link(&self, user_id: Option<&str>, id_or_ident: &str) -> Result<Option<Link>> {
+        use crate::db::schema::links;
         let mut conn = self.pool.get()?;
 
-        let res = dsl::links
-            .filter(dsl::creator_id.eq(user_id))
-            .filter(
-                dsl::id
-                    .eq(id_or_ident)
-                    .or(dsl::ident.eq(id_or_ident)),
-            )
+        let mut query = links::table.into_boxed();
+
+        if let Some(user_id) = user_id {
+            query = query.filter(links::creator_id.eq(user_id))
+        }
+
+        let res = query
+            .filter(links::id.eq(id_or_ident).or(links::ident.eq(id_or_ident)))
             .first(&mut conn);
         let res = mute_not_found(res)?;
         Ok(res)
@@ -40,9 +41,7 @@ impl traits::links::Links for Postgres {
         use crate::db::schema::links::dsl;
         let mut conn = self.pool.get()?;
 
-        let res = dsl::links
-            .filter(dsl::ident.eq(ident))
-            .first(&mut conn);
+        let res = dsl::links.filter(dsl::ident.eq(ident)).first(&mut conn);
         let res = mute_not_found(res)?;
         Ok(res)
     }
