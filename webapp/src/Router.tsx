@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
+import { EditRoute } from "./routes/edit/Edit";
 import { InitRoute } from "./routes/init/Init";
 import { LinkRoute } from "./routes/link/Link";
 import { LoginRoute } from "./routes/login/Login";
@@ -24,7 +25,9 @@ export const Router: React.FC<Props> = ({}) => {
       <Route index element={<MainRoute />} />
       <Route path="/login" element={<LoginRoute />} />
       <Route path="/init" element={<InitRoute />} />
-      <Route path="/:ident" element={<LinkRoute />} />
+      <Route path="/new" element={<EditRoute isNew />} />
+      <Route path="/:id" element={<LinkRoute />} />
+      <Route path="/:id/edit" element={<EditRoute />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

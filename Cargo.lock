@@ -1573,6 +1573,7 @@ dependencies = [
  "getrandom",
  "jsonwebtoken",
  "log",
+ "regex",
  "rust-argon2",
  "serde",
  "serde_json",

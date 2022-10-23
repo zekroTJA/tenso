@@ -6,6 +6,7 @@ export type ButtonTile = {
   content: string | JSX.Element;
   color: string;
   action: () => void;
+  disabled?: boolean;
 };
 
 type Props = {
@@ -14,16 +15,18 @@ type Props = {
 
 const Container = styled.div`
   position: fixed;
+  display: flex;
   bottom: 0em;
   width: 100%;
-  max-width: 30em;
   padding: 1em;
-  margin: 0 auto;
 
   > div {
     display: flex;
     border-radius: 8px;
     overflow: hidden;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 30em;
   }
 `;
 
@@ -40,11 +43,18 @@ const Button = styled.button<{ color: string }>`
   justify-content: center;
   gap: 0.5em;
 
+  transition: all 0.2s ease;
+
   background: linear-gradient(
     90deg,
     ${(p) => p.color} 0%,
     ${(p) => Color(p.color).darken(0.2).hexa()}
   );
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const Floatbar: React.FC<Props> = ({ buttons }) => {
@@ -52,7 +62,12 @@ export const Floatbar: React.FC<Props> = ({ buttons }) => {
     <Container>
       <div>
         {buttons.map((b) => (
-          <Button key={useId()} color={b.color} onClick={b.action}>
+          <Button
+            key={useId()}
+            color={b.color}
+            onClick={b.action}
+            disabled={b.disabled}
+          >
             {b.content}
           </Button>
         ))}

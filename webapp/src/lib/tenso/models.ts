@@ -12,6 +12,7 @@ export type InitCredentials = Credentials & {
 };
 
 export type Link = {
+  id: string;
   ident: string;
   destination: string;
   enabled: boolean;

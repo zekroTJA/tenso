@@ -35,7 +35,7 @@ export const MainRoute: React.FC<Props> = ({}) => {
   const [links, setLinks] = useState<Link[]>();
 
   const onLinkClick = (link: Link) => {
-    nav("/" + link.ident);
+    nav("/" + link.id);
   };
 
   useEffect(() => {
@@ -49,6 +49,7 @@ export const MainRoute: React.FC<Props> = ({}) => {
           <LinkEntry key={l.ident} link={l} onClick={onLinkClick} />
         ))}
       </List>
+
       <Floatbar
         buttons={[
           {

@@ -30,25 +30,25 @@ export class Client {
   }
 
   link(id: string): Promise<Link> {
-    return this.httpClient.req("GET", `link/${id}`);
+    return this.httpClient.req("GET", `links/${id}`);
   }
 
   linkCreate(link: Link): Promise<Link> {
-    return this.httpClient.req("GET", "link", link);
+    return this.httpClient.req("POST", "links", link);
   }
 
-  linkUpdate(ident: string, link: Partial<Link>): Promise<Link> {
-    return this.httpClient.req("GET", `link/${ident}`, link);
+  linkUpdate(id: string, link: Partial<Link>): Promise<Link> {
+    return this.httpClient.req("POST", `links/${id}`, link);
   }
 
-  linkDelete(ident: string): Promise<void> {
-    return this.httpClient.req("DELETE", `link/${ident}`);
+  linkDelete(id: string): Promise<void> {
+    return this.httpClient.req("DELETE", `links/${id}`);
   }
 
-  stats(ident: string, from?: string, to?: string): Promise<void> {
+  stats(id: string, from?: string, to?: string): Promise<void> {
     const params = new URLSearchParams();
     from ?? params.set("from", from!);
     to ?? params.set("to", to!);
-    return this.httpClient.req("GET", `stats/${ident}?${params.toString()}`);
+    return this.httpClient.req("GET", `stats/${id}?${params.toString()}`);
   }
 }
