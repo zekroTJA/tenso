@@ -1,5 +1,6 @@
 use crate::{
     db::{models::Link, DatabaseDriver},
+    util::links,
     ws::{
         middleware::auth::AuthService,
         models::{LinkCreateRequestModel, LinkUpdateRequestModel, PagingQuery},
@@ -58,11 +59,13 @@ async fn cretae_link(
         return Err(error::ErrorBadRequest("link with ident already exists"));
     }
 
+    let destination = links::normalize(&link.destination).map_err(error::ErrorBadRequest)?;
+
     let link = Link {
         id: xid::new().to_string(),
         created_date: Local::now().naive_local(),
         creator_id: auth.claims().sub,
-        destination: link.destination.clone(),
+        destination,
         enabled: link.enabled,
         ident: link.ident.clone(),
         permanent_redirect: link.permanent_redirect,
@@ -97,12 +100,15 @@ async fn update_link(
         }
     }
 
+    let destination = links::normalize(link.destination.as_ref().unwrap_or(&res.destination))
+        .map_err(error::ErrorBadRequest)?;
+
     let new_link = Link {
         id: res.id,
         created_date: res.created_date,
         creator_id: res.creator_id,
         ident: link.ident.clone().unwrap_or(res.ident),
-        destination: link.destination.clone().unwrap_or(res.destination),
+        destination,
         enabled: link.enabled.unwrap_or(res.enabled),
         permanent_redirect: link.permanent_redirect.unwrap_or(res.permanent_redirect),
     };
