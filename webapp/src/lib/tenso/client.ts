@@ -1,4 +1,11 @@
-import { Credentials, InitCredentials, Initialized, Link } from "./models";
+import {
+  Count,
+  Credentials,
+  InitCredentials,
+  Initialized,
+  Link,
+  Stats,
+} from "./models";
 
 import { HttpClient } from "./http";
 
@@ -45,10 +52,14 @@ export class Client {
     return this.httpClient.req("DELETE", `links/${id}`);
   }
 
-  stats(id: string, from?: string, to?: string): Promise<void> {
+  stats(id: string, from?: string, to?: string): Promise<Stats> {
     const params = new URLSearchParams();
-    from ?? params.set("from", from!);
-    to ?? params.set("to", to!);
+    from && params.set("from", from!);
+    to && params.set("to", to!);
     return this.httpClient.req("GET", `stats/${id}?${params.toString()}`);
+  }
+
+  count(id: string): Promise<Count> {
+    return this.httpClient.req("GET", `stats/${id}/count`);
   }
 }

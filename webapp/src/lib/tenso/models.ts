@@ -18,3 +18,9 @@ export type Link = {
   enabled: boolean;
   permanent_redirect: boolean;
 };
+
+export type Count = {
+  count: number;
+};
+
+export type Stats = [string, number][];
