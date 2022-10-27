@@ -1,5 +1,3 @@
-use env_logger::fmt;
-
 #[derive(Debug)]
 pub enum Error {
     InvalidFormat,

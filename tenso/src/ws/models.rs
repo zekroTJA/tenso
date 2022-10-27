@@ -6,6 +6,11 @@ pub struct AuthCheckResponseModel {
     pub initialized: bool,
 }
 
+#[derive(Serialize)]
+pub struct CountResponseModel<T: Into<usize>> {
+    pub count: T,
+}
+
 #[derive(Deserialize)]
 pub struct AuthInitRequestModel {
     pub username: String,

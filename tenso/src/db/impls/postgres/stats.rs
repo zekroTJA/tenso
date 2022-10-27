@@ -4,7 +4,7 @@ use crate::db::{
     traits::{self},
 };
 use anyhow::Result;
-use diesel::prelude::*;
+use diesel::{dsl::count, prelude::*};
 
 impl traits::stats::Stats for Postgres {
     fn put_stats(&self, entry: &StatEntry) -> Result<()> {
@@ -22,10 +22,29 @@ impl traits::stats::Stats for Postgres {
         Ok(())
     }
 
+    fn get_count(&self, user_id: Option<&str>, link_id: &str) -> Result<usize> {
+        use crate::db::schema::links;
+        use crate::db::schema::stats;
+        let mut conn = self.pool.get()?;
+
+        let mut query = stats::table.inner_join(links::table).into_boxed();
+
+        if let Some(user_id) = user_id {
+            query = query.filter(links::creator_id.eq(user_id));
+        }
+
+        let count: i64 = query
+            .filter(stats::link_id.eq(link_id))
+            .select(count(links::id))
+            .first(&mut conn)?;
+
+        Ok(count as usize)
+    }
+
     fn query_stats(
         &self,
         user_id: Option<&str>,
-        link_id: Option<&str>,
+        link_id: &str,
         from: Option<chrono::NaiveDateTime>,
         to: Option<chrono::NaiveDateTime>,
     ) -> Result<Vec<StatEntry>> {
@@ -33,16 +52,12 @@ impl traits::stats::Stats for Postgres {
         use crate::db::schema::stats;
         let mut conn = self.pool.get()?;
 
-        let mut query = stats::table
-            .inner_join(links::table)
-            .into_boxed();
+        let mut query = stats::table.inner_join(links::table).into_boxed();
+
+        query = query.filter(stats::link_id.eq(link_id));
 
         if let Some(user_id) = user_id {
             query = query.filter(links::creator_id.eq(user_id));
-        }
-
-        if let Some(link_id) = link_id {
-            query = query.filter(stats::link_id.eq(link_id));
         }
 
         if let Some(from) = from {
