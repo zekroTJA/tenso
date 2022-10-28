@@ -5,18 +5,35 @@ use crate::db::{
     traits::{self},
 };
 use anyhow::Result;
-use diesel::prelude::*;
+use diesel::{
+    dsl::sql,
+    prelude::*,
+    sql_types::{Bool, Text},
+};
 
 impl traits::links::Links for Postgres {
-    fn list_links(&self, user_id: &str, limit: i64, offset: i64) -> Result<Vec<Link>> {
-        use crate::db::schema::links::dsl;
+    fn list_links(
+        &self,
+        user_id: &str,
+        limit: i64,
+        offset: i64,
+        search: Option<&str>,
+    ) -> Result<Vec<Link>> {
+        use crate::db::schema::links;
         let mut conn = self.pool.get()?;
 
-        let res = dsl::links
-            .filter(dsl::creator_id.eq(user_id))
-            .limit(limit)
-            .offset(offset)
-            .load(&mut conn)?;
+        let mut query = links::table.into_boxed().filter(links::creator_id.eq(user_id));
+
+        if let Some(search) = search {
+            query = query.filter(
+                sql::<Bool>("ident ~ ")
+                    .bind::<Text, _>(search)
+                    .sql(" OR destination ~ ")
+                    .bind::<Text, _>(search),
+            );
+        }
+
+        let res = query.limit(limit).offset(offset).load(&mut conn)?;
         Ok(res)
     }
 

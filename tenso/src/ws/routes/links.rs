@@ -3,7 +3,7 @@ use crate::{
     util::links,
     ws::{
         middleware::auth::AuthService,
-        models::{LinkCreateRequestModel, LinkUpdateRequestModel, PagingQuery},
+        models::{LinkCreateRequestModel, LinkListQuery, LinkUpdateRequestModel},
         tokens::Claims,
     },
 };
@@ -18,13 +18,14 @@ use chrono::Local;
 async fn get_links(
     auth: AuthService,
     db: Data<DatabaseDriver>,
-    query: Query<PagingQuery>,
+    query: Query<LinkListQuery>,
 ) -> Result<HttpResponse, Error> {
     let res = web::block(move || {
         db.list_links(
             &auth.claims().sub,
             query.limit.unwrap_or(50) as i64,
             query.offset.unwrap_or(0) as i64,
+            query.search.as_deref(),
         )
     })
     .await?

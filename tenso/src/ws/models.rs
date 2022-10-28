@@ -41,9 +41,10 @@ pub struct LinkUpdateRequestModel {
 }
 
 #[derive(Deserialize)]
-pub struct PagingQuery {
+pub struct LinkListQuery {
     pub limit: Option<usize>,
     pub offset: Option<usize>,
+    pub search: Option<String>,
 }
 
 #[derive(Deserialize)]
