@@ -18,7 +18,7 @@ services:
     image: ghcr.io/zekrotja/tenso:latest
     environment:
       DEBUG_MODE: "false"
-      WS_BINDADDR: "http://0.0.0.0:80"
+      RUST_LOG: "info"
       DATABASE_URL: "postgres://root:root@postgres/tenso"
       WS_SIGNING_KEY: "46657507-f356-4561-bea0-5f88c3705c50"
       WS_REDIRECT_DEFAULT: "https://zekro.de"
