@@ -20,4 +20,4 @@ RUN apt-get update && apt-get install -y libpq5
 ENV WS_BINDADDRESS="0.0.0.0:80"
 ENV WS_ASSETDIR="/var/opt/tenso/webapp"
 EXPOSE 80
-ENTRYPOINT [ "/var/tenso/tenso" ]
+ENTRYPOINT [ "/bin/tenso" ]
