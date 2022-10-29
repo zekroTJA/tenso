@@ -8,6 +8,7 @@ on:
       - "*"
     paths:
       - "tenso/**"
+      - "webapp/**"
       - ".github/workflows/docker-cd.yml"
   workflow_dispatch:
 
