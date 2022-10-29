@@ -14,7 +14,6 @@ use actix_web::{
     App, HttpServer,
 };
 use anyhow::Result;
-use diesel::row::NamedRow;
 use log::warn;
 use std::{net, path::Path};
 

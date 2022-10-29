@@ -8,6 +8,17 @@ use actix_web::{
     Error, HttpRequest, HttpResponse,
 };
 
+#[get("/")]
+async fn get_root(cfg: Data<Config>) -> Result<HttpResponse, Error> {
+    if let Some(default_redirect) = &cfg.default_redirect {
+        Ok(HttpResponse::Found()
+            .append_header(("Location", default_redirect.to_string()))
+            .finish())
+    } else {
+        Ok(HttpResponse::NotFound().finish())
+    }
+}
+
 #[get("/{ident}")]
 async fn get_redirect(
     db: Data<DatabaseDriver>,
@@ -35,11 +46,7 @@ async fn get_redirect(
     entry.user_agent = req
         .headers()
         .get("User-Agent")
-        .map(|v| {
-            v.to_str()
-                .unwrap_or_default()
-                .to_string()
-        });
+        .map(|v| v.to_str().unwrap_or_default().to_string());
 
     tokio::spawn(web::block(move || {
         let res = db.put_stats(&entry);
@@ -53,11 +60,10 @@ async fn get_redirect(
     } else {
         HttpResponse::TemporaryRedirect()
     };
-    Ok(response
-        .append_header(("Location", link.destination))
-        .finish())
+    Ok(response.append_header(("Location", link.destination)).finish())
 }
 
 pub fn register(cfg: &mut ServiceConfig) {
+    cfg.service(get_root);
     cfg.service(get_redirect);
 }
