@@ -17,6 +17,7 @@ type Props = {
 const Container = styled.div`
   padding: 1em;
   max-width: 50em;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -87,7 +88,7 @@ export const EditRoute: React.FC<Props> = ({ isNew = false }) => {
   }, [id]);
 
   return (
-    <div>
+    <>
       <Container>
         <h2>{(isNew && <>Create Link</>) || <>Edit Link</>}</h2>
         <section>
@@ -148,6 +149,6 @@ export const EditRoute: React.FC<Props> = ({ isNew = false }) => {
           },
         ]}
       />
-    </div>
+    </>
   );
 };

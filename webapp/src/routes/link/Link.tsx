@@ -36,9 +36,8 @@ const defaultChartOptions: Partial<ApexCharts.ApexOptions> = {
 };
 
 const Container = styled.div`
-  padding: 1em;
   max-width: 50em;
-  margin: 0 auto;
+  width: 100%;
 `;
 
 const Destination = styled.div`
@@ -94,7 +93,7 @@ export const LinkRoute: React.FC<Props> = ({}) => {
   }, [id]);
 
   return (
-    <div>
+    <>
       <Container>
         {link && (
           <>
@@ -185,6 +184,6 @@ export const LinkRoute: React.FC<Props> = ({}) => {
           },
         ]}
       />
-    </div>
+    </>
   );
 };

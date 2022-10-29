@@ -1,10 +1,12 @@
 import styled, { useTheme } from "styled-components";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Floatbar } from "../../components/Floatbar";
 import { Link } from "../../lib/tenso";
 import { LinkEntry } from "../../components/LinkEntry";
 import { ReactComponent as PlusIcon } from "../../assets/plus.svg";
+import { SearchBar } from "../../components/SearchBar";
+import { debounce } from "debounce";
 import { useApi } from "../../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 
@@ -15,16 +17,17 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1em;
-  padding: 1em;
+  padding: 1em 0em 5em 0em;
 `;
 
 const Container = styled.div`
+  max-width: 50em;
+  width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 
   > ${List} {
-    width: 100%;
-    max-width: 50em;
+    height: 100%;
   }
 `;
 
@@ -33,17 +36,21 @@ export const MainRoute: React.FC<Props> = ({}) => {
   const nav = useNavigate();
   const theme = useTheme();
   const [links, setLinks] = useState<Link[]>();
+  const [search, setSearch] = useState<string>("");
 
   const onLinkClick = (link: Link) => {
     nav("/" + link.id);
   };
 
+  const onSearch = useCallback(debounce(setSearch, 500), []);
+
   useEffect(() => {
-    fetch((c) => c.links()).then((links) => setLinks(links));
-  }, []);
+    fetch((c) => c.links(search)).then((links) => setLinks(links));
+  }, [search]);
 
   return (
     <Container>
+      <SearchBar onValueChange={onSearch} />
       <List>
         {links?.map((l) => (
           <LinkEntry key={l.ident} link={l} onClick={onLinkClick} />

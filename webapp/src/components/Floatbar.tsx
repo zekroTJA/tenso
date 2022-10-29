@@ -15,9 +15,10 @@ type Props = {
 
 const Container = styled.div`
   position: fixed;
-  display: flex;
-  bottom: 0em;
-  width: 100%;
+  height: fit-content;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
   padding: 1em;
 
   > div {
@@ -31,7 +32,8 @@ const Container = styled.div`
 `;
 
 const Button = styled.button<{ color: string }>`
-  width: 200%;
+  width: 100%;
+  height: fit-content;
   color: inherit;
   padding: 0.6em;
   border: none;

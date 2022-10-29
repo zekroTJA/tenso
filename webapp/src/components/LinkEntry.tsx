@@ -11,6 +11,9 @@ const Container = styled.div<{ disabled: boolean }>`
   background-color: ${(p) => p.theme.background2};
   padding: 1em;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
 
   transition: all 0.15s ease;
 
@@ -25,8 +28,16 @@ const Container = styled.div<{ disabled: boolean }>`
       `}
   }
 
+  > span {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.7;
+  }
+
   &:hover {
-    transform: scale(1.03);
+    background-color: ${(p) => p.theme.background3};
   }
 `;
 

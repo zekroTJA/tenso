@@ -36,6 +36,9 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   color: ${(p) => p.theme.text};
+  display: flex;
+  justify-content: center;
+  padding: 1em 1em 0 1em;
 `;
 
 function App() {

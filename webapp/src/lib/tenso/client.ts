@@ -32,8 +32,12 @@ export class Client {
     return this.httpClient.req("GET", "auth/check");
   }
 
-  links(): Promise<Link[]> {
-    return this.httpClient.req("GET", "links");
+  links(search?: string, limit?: number, offset?: number): Promise<Link[]> {
+    const params = new URLSearchParams();
+    limit && params.set("limit", limit!.toString());
+    offset && params.set("offset", offset!.toString());
+    search && params.set("search", search!);
+    return this.httpClient.req("GET", `links?${params.toString()}`);
   }
 
   link(id: string): Promise<Link> {
