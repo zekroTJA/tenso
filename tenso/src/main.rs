@@ -17,8 +17,9 @@ async fn main() -> anyhow::Result<()> {
     let bind_addr = env::var("WS_BINDADDR").unwrap_or_else(|_| "0.0.0.0:80".into());
     let database_url =
         env::var("DATABASE_URL").expect("DATABASE_URL environment variable is not set");
-    let jwt_signing_key =
-        env::var("WS_SIGNING_KEY").unwrap_or_else(|_| "TODO: generate random signing key".into());
+    // TODO: Automatically generate on startup when not set
+    let jwt_signing_key = env::var("WS_SIGNING_KEY")
+        .expect("A signing key must be provided via env var 'WS_SIGNING_KEY'!");
     let default_redirect = env::var("WS_REDIRECT_DEFAULT").ok();
     let notfound_redirect = env::var("WS_REDIRECT_NOTFOUND").ok();
     let origin_url = env::var("WS_ORIGINURL").ok();
