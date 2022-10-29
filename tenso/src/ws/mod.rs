@@ -14,8 +14,9 @@ use actix_web::{
     App, HttpServer,
 };
 use anyhow::Result;
+use diesel::row::NamedRow;
 use log::warn;
-use std::net;
+use std::{net, path::Path};
 
 use self::{middleware::xsrf::Xsrf, tokens::TokenHandler};
 
@@ -25,6 +26,7 @@ pub struct Config {
     pub default_redirect: Option<String>,
     pub notfound_redirect: Option<String>,
     pub origin_url: Option<String>,
+    pub asset_dir: String,
 }
 
 pub(self) struct State {
@@ -64,6 +66,8 @@ where
     let state = Data::new(state);
 
     HttpServer::new(move || {
+        let asset_dir = cfg.asset_dir.to_owned();
+
         App::new()
             .app_data(cfg.clone())
             .app_data(db.clone())
@@ -71,14 +75,16 @@ where
             .app_data(state.clone())
             .wrap(Logger::default())
             .service(
-                Files::new("/ui", "./webapp/dist").index_file("index.html").default_handler(
-                    fn_service(|req: ServiceRequest| async {
+                Files::new("/ui", asset_dir)
+                    .index_file("index.html")
+                    .default_handler(fn_service(|req: ServiceRequest| async {
                         let (req, _) = req.into_parts();
-                        let file = NamedFile::open_async("./webapp/dist/index.html").await?;
+                        let asset_dir = req.app_data::<Data<Config>>().unwrap().asset_dir.clone();
+                        let file =
+                            NamedFile::open_async(Path::new(&asset_dir).join("index.html")).await?;
                         let res = file.into_response(&req);
                         Ok(ServiceResponse::new(req, res))
-                    }),
-                ),
+                    })),
             )
             .service(
                 web::scope("/api")

@@ -22,6 +22,7 @@ async fn main() -> anyhow::Result<()> {
     let default_redirect = env::var("WS_REDIRECT_DEFAULT").ok();
     let notfound_redirect = env::var("WS_REDIRECT_NOTFOUND").ok();
     let origin_url = env::var("WS_ORIGINURL").ok();
+    let asset_dir = env::var("WS_ASSETDIR").unwrap_or_else(|_| "./webapp/dist".into());
 
     let d = db::DatabaseDriver::init(&database_url)?;
     info!("DB :: Applying database migrations ...");
@@ -33,6 +34,7 @@ async fn main() -> anyhow::Result<()> {
         default_redirect,
         notfound_redirect,
         origin_url,
+        asset_dir,
     };
     info!("WS :: Binding to {bind_addr}");
     ws::run(&bind_addr, cfg, d).await?;
