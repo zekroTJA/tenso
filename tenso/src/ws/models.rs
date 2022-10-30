@@ -52,3 +52,9 @@ pub struct StatsQuery {
     pub from: Option<NaiveDateTime>,
     pub to: Option<NaiveDateTime>,
 }
+
+#[derive(Deserialize)]
+pub struct ChangePasswordRequestModel {
+    pub old: String,
+    pub new: String,
+}

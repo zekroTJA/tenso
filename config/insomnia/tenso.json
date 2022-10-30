@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2022-10-11T11:39:48.731Z",
+  "__export_date": "2022-10-30T11:16:05.213Z",
   "__export_source": "insomnia.desktop.app:v2022.6.0",
   "resources": [
     {
@@ -75,7 +75,7 @@
     {
       "_id": "req_369c149de01848f582c5e0211b2e0c8f",
       "parentId": "fld_a99dc073d9fc4903a68c7844e7235c3c",
-      "modified": 1665488257433,
+      "modified": 1665827710483,
       "created": 1665390836299,
       "url": "{{ _.host }}/api/auth/init",
       "name": "init",
@@ -86,7 +86,20 @@
         "text": "{\n\t\"username\": \"{{ _.credentials.username }}\",\n\t\"password\": \"{{ _.credentials.password }}\"\n}"
       },
       "parameters": [],
-      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_7af73a4b98c346668901bc650194ca2c"
+        },
+        {
+          "id": "pair_c559c7a4653043f0acfa845e1069e6b5",
+          "name": "X-XSRF-Token",
+          "value": "test",
+          "description": "",
+          "disabled": false
+        }
+      ],
       "authentication": {},
       "metaSortKey": -1664485121293.5,
       "isPrivate": false,
@@ -101,7 +114,7 @@
     {
       "_id": "req_b6f4737921bf4428a9730548a921bd3f",
       "parentId": "fld_a99dc073d9fc4903a68c7844e7235c3c",
-      "modified": 1665488261111,
+      "modified": 1667127738228,
       "created": 1665390935650,
       "url": "{{ _.host }}/api/auth/login",
       "name": "login",
@@ -112,7 +125,19 @@
         "text": "{\n\t\"username\": \"{{ _.credentials.username }}\",\n\t\"password\": \"{{ _.credentials.password }}\"\n}"
       },
       "parameters": [],
-      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_91e865ec60fa44b7bef28c249de635cd"
+        },
+        {
+          "id": "pair_5cd83b418e354df5a6c779f619e0e5ad",
+          "name": "X-XSRF-Token",
+          "value": "test",
+          "description": ""
+        }
+      ],
       "authentication": {},
       "metaSortKey": -1664032301526.75,
       "isPrivate": false,
@@ -138,6 +163,32 @@
       "headers": [],
       "authentication": {},
       "metaSortKey": -1663805891643.375,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_dcb4caa64a71462bac3913dd5bea2b9c",
+      "parentId": "fld_a99dc073d9fc4903a68c7844e7235c3c",
+      "modified": 1667128499492,
+      "created": 1667127760824,
+      "url": "{{ _.host }}/api/auth/password",
+      "name": "change password",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"old\": \"poggers\",\n\t\"new\": \"cock\"\n}"
+      },
+      "parameters": [],
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "authentication": {},
+      "metaSortKey": -1657524274207.1875,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -223,7 +274,7 @@
     {
       "_id": "req_9f789d52fca94fbaaa150811188a8b60",
       "parentId": "fld_67b5bd47732340cf85295d59d8dbf902",
-      "modified": 1665488270079,
+      "modified": 1666717447802,
       "created": 1665391060478,
       "url": "{{ _.host }}/api/links",
       "name": "create",
@@ -231,7 +282,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n\t\"ident\": \"poggers\",\n\t\"destination\": \"champ\",\n\t\"enabled\": true,\n\t\"permanent_redirect\": false\n}"
+        "text": "{\n\t\"ident\": \"jaloley\",\n\t\"destination\": \"asdasdasd\",\n\t\"enabled\": true,\n\t\"permanent_redirect\": false\n}"
       },
       "parameters": [],
       "headers": [{ "name": "Content-Type", "value": "application/json" }],
@@ -298,9 +349,9 @@
     {
       "_id": "req_01087b6a561a4a80bce882c38429b1f4",
       "parentId": "fld_af92d40d36344d399c28fbf281c2f73c",
-      "modified": 1665488280029,
+      "modified": 1666719064388,
       "created": 1665476952155,
-      "url": "{{ _.host }}/api/stats/cd20kfl7j2gfk6bet5s0",
+      "url": "{{ _.host }}/api/stats/cd63eal7j2g0cdhn1c1g",
       "name": "list",
       "description": "",
       "method": "GET",
@@ -311,14 +362,14 @@
           "name": "from",
           "value": "2022-10-10T8:00:00",
           "description": "",
-          "disabled": false
+          "disabled": true
         },
         {
           "id": "pair_7139f5cf34e64a48904eb0ab37bea89b",
           "name": "to",
           "value": "2022-10-11T12:00:00",
           "description": "",
-          "disabled": false
+          "disabled": true
         }
       ],
       "headers": [],
@@ -346,6 +397,44 @@
       "_type": "request_group"
     },
     {
+      "_id": "req_1bf14706031d4ab6803a67260e586c5d",
+      "parentId": "fld_af92d40d36344d399c28fbf281c2f73c",
+      "modified": 1666717604000,
+      "created": 1666717457938,
+      "url": "{{ _.host }}/api/stats/cd63eal7j2g0cdhn1c1g/count",
+      "name": "count",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_9a15973aeb484cc19af8d17b17ecfcd0",
+          "name": "from",
+          "value": "2022-10-10T8:00:00",
+          "description": "",
+          "disabled": false
+        },
+        {
+          "id": "pair_7139f5cf34e64a48904eb0ab37bea89b",
+          "name": "to",
+          "value": "2022-10-11T12:00:00",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1664853037353.9844,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "env_d871233e69ad78b0b7051eae9523c85ec6c2fbd2",
       "parentId": "wrk_9d2d687b1a62483b8f8bde101a4d5b7d",
       "modified": 1665390727080,
@@ -361,21 +450,30 @@
     {
       "_id": "jar_d871233e69ad78b0b7051eae9523c85ec6c2fbd2",
       "parentId": "wrk_9d2d687b1a62483b8f8bde101a4d5b7d",
-      "modified": 1665390977595,
+      "modified": 1667127739935,
       "created": 1665390486113,
       "name": "Default Jar",
       "cookies": [
         {
+          "key": "xsrf-token",
+          "value": "test",
+          "expires": null,
+          "domain": "localhost",
+          "path": "/",
+          "creation": "2022-10-15T09:53:52.940Z",
+          "id": "040835517800970944"
+        },
+        {
           "key": "token",
-          "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Njc5ODI5NzcsImlhdCI6MTY2NTM5MDk3Nywic3ViIjoicm9vdCJ9.PpZU-dUzV7dmcMXTVdnk0cbPQl4dqYlbaBHhHtfgh48",
+          "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Njk3MTk3MzksImlhdCI6MTY2NzEyNzczOSwic3ViIjoicm9vdCJ9.uwDBonLUu1rEc0kfvMc1_vM4o5x5IrRcZFdFA4eFrjI",
           "maxAge": 2592000,
           "domain": "localhost",
           "path": "/",
           "httpOnly": true,
           "hostOnly": true,
-          "creation": "2022-10-10T08:36:17.578Z",
-          "lastAccessed": "2022-10-10T08:36:17.578Z",
-          "id": "8312455328108859"
+          "creation": "2022-10-15T09:55:16.898Z",
+          "lastAccessed": "2022-10-30T11:02:19.919Z",
+          "id": "17867693714394317"
         }
       ],
       "_type": "cookie_jar"
