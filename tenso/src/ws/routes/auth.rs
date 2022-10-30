@@ -148,7 +148,7 @@ async fn post_password(
         .await?
         .map_err(error::ErrorInternalServerError)?;
 
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::NoContent().finish())
 }
 
 pub fn register(cfg: &mut ServiceConfig) {
