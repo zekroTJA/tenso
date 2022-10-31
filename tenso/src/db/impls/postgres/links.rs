@@ -33,7 +33,11 @@ impl traits::links::Links for Postgres {
             );
         }
 
-        let res = query.limit(limit).offset(offset).load(&mut conn)?;
+        let res = query
+            .order(links::created_date.desc())
+            .limit(limit)
+            .offset(offset)
+            .load(&mut conn)?;
         Ok(res)
     }
 
