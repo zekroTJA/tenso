@@ -13,6 +13,7 @@ import { ReactComponent as PencilIcon } from "../../assets/pencil.svg";
 import ReactApexChart from "react-apexcharts";
 import { ReactComponent as TrashIcon } from "../../assets/trash.svg";
 import { useApi } from "../../hooks/useApi";
+import { useNotification } from "../../hooks/useNotification";
 
 type Props = {};
 
@@ -75,6 +76,7 @@ export const LinkRoute: React.FC<Props> = ({}) => {
   const theme = useTheme();
   const { id } = useParams();
   const fetch = useApi();
+  const { showNotification } = useNotification();
   const nav = useNavigate();
   const [link, setLink] = useState<Link>();
   const [stats, setStats] = useState<Stats>();
@@ -82,7 +84,10 @@ export const LinkRoute: React.FC<Props> = ({}) => {
 
   const deleteLink = () => {
     if (!id) return;
-    fetch((c) => c.linkDelete(id)).then(() => nav(-1));
+    fetch((c) => c.linkDelete(id)).then(() => {
+      nav(-1);
+      showNotification("Link has been deleted.", "success");
+    });
   };
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import { Link } from "../../lib/tenso";
 import { ReactComponent as SaveIcon } from "../../assets/save.svg";
 import { Switch } from "../../components/Slider";
 import { useApi } from "../../hooks/useApi";
+import { useNotification } from "../../hooks/useNotification";
 
 type Props = {
   isNew?: boolean;
@@ -68,6 +69,7 @@ export const EditRoute: React.FC<Props> = ({ isNew = false }) => {
   const theme = useTheme();
   const { id } = useParams();
   const fetch = useApi();
+  const { showNotification } = useNotification();
   const nav = useNavigate();
   const [link, dispatch] = useReducer(linkReducer, {
     enabled: true,
@@ -76,9 +78,14 @@ export const EditRoute: React.FC<Props> = ({ isNew = false }) => {
 
   const save = () => {
     if (isNew) {
-      fetch((c) => c.linkCreate(link)).then(() => nav(-1));
+      fetch((c) => c.linkCreate(link)).then(() => {
+        nav(-1);
+        showNotification("Link has been created.", "success");
+      });
     } else {
-      fetch((c) => c.linkUpdate(link.id, link));
+      fetch((c) => c.linkUpdate(link.id, link)).then(() => {
+        showNotification("Link has been updated.", "success");
+      });
     }
   };
 
