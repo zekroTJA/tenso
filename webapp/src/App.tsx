@@ -12,6 +12,7 @@ import { DarkTheme } from "./theme/theme";
 import { InitRoute } from "./routes/init/Init";
 import { LoginRoute } from "./routes/login/Login";
 import { MainRoute } from "./routes/main/Main";
+import { Notification } from "./components/Notification";
 import { Router } from "./Router";
 import { useApi } from "./hooks/useApi";
 import { useEffect } from "react";
@@ -48,6 +49,7 @@ function App() {
         <BrowserRouter basename="/ui">
           <Router />
         </BrowserRouter>
+        <Notification />
       </Container>
       <GlobalStyle />
     </ThemeProvider>
