@@ -1,8 +1,4 @@
-use std::{
-    future::{ready, Ready},
-    rc::Rc,
-};
-
+use crate::util::rand::Rand;
 use actix_service::Transform;
 use actix_web::{
     cookie::{Cookie, Expiration, SameSite},
@@ -10,8 +6,10 @@ use actix_web::{
     error, Error,
 };
 use futures::{future::LocalBoxFuture, FutureExt};
-
-use crate::util::rand::Rand;
+use std::{
+    future::{ready, Ready},
+    rc::Rc,
+};
 
 pub struct XsrfMiddleware<S> {
     service: Rc<S>,

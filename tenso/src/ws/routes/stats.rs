@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::{
     db::DatabaseDriver,
     ws::{
@@ -14,6 +12,7 @@ use actix_web::{
 };
 use chrono::{Duration, Local};
 use log::debug;
+use std::collections::HashMap;
 
 #[get("/{id}/count")]
 async fn get_count(

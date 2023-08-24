@@ -2,11 +2,10 @@ mod db;
 mod util;
 mod ws;
 
+use crate::util::rand::Rand;
 use dotenvy::dotenv;
 use log::info;
 use std::env;
-
-use crate::util::rand::Rand;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

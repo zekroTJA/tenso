@@ -3,6 +3,7 @@ mod models;
 mod routes;
 mod tokens;
 
+use self::{middleware::xsrf::Xsrf, tokens::TokenHandler};
 use crate::{db::DatabaseDriver, util::rand::Rand};
 use actix_cors::Cors;
 use actix_files::{Files, NamedFile};
@@ -17,8 +18,6 @@ use anyhow::Result;
 use log::warn;
 use std::{net, path::Path};
 
-use self::{middleware::xsrf::Xsrf, tokens::TokenHandler};
-
 pub struct Config {
     pub debug_mode: bool,
     pub jwt_signing_key: String,
@@ -28,7 +27,7 @@ pub struct Config {
     pub asset_dir: String,
 }
 
-pub(self) struct State {
+pub struct State {
     pub initialization_token: Option<String>,
 }
 
