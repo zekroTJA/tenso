@@ -2,7 +2,7 @@ import { Client } from "../lib/tenso";
 
 const API_ENDPOINT = import.meta.env.PROD
   ? "/api"
-  : "http://localhost:8080/api";
+  : "http://localhost:8081/api";
 
 export const LOGIN_ROUTE = API_ENDPOINT + "/auth/login";
 
